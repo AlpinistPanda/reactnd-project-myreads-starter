@@ -16,11 +16,13 @@ class App extends Component {
     })
   }
 
-  removeBook = (book) => {
-    this.setState((state) => ({
-      books: state.books.filter((b) => b.id !== book.id)
-    }))
-    // BooksAPI.removeBook(book)
+
+  changeShelf(book, shelf){
+    BooksAPI.update(book, shelf).then(() => {
+      BooksAPI.getAll().then((books) => {
+        this.setState({ books })
+    })
+  })
   }
 
   render() {
@@ -28,8 +30,9 @@ class App extends Component {
       <div className='app'>
       <Route exact path="/" render={() => (
         <ListBooks
-          onDeleteBook={this.removeBook}
-          books={this.state.books}/>
+          onChangeShelf={this.changeShelf.bind(this)}
+          books={this.state.books}
+          shelf={['currentlyReading', 'read', 'wantToRead']}/>
 
 )}/>
 <Route path="/create" component={CreateBook}/>
