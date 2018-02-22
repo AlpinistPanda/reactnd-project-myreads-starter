@@ -11,7 +11,7 @@ return (
     <ol className="books-grid">
       {props.books.map((book) =>(
         <li key={book.id}>
-          <Books 
+          <Books
             book={book}
             onChangeShelf={props.onChangeShelf}/>
         </li>
@@ -23,4 +23,4 @@ return (
   };
 
 
-export default bookshelf;
+export default bookshelf

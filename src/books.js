@@ -6,14 +6,14 @@ return (
     <div className="book">
     <div className="book-top">
         <div className="book-cover">
-        <img src={props.book.imageLinks.thumbnail}
+        <img src={props.book.imageLinks.thumbnail} alt={props.book.title}
             style={{ width: 128,
             height: 193}}>
         </img>
         </div>
         <div className="book-shelf-changer">
         <select onChange={(e) => props.onChangeShelf(props.book, e.target.value)} value={props.book.shelf}>
-            <option value="none" disabled>Move to...</option>
+            <option value="na" disabled>Move to...</option>
             <option value="currentlyReading">Currently Reading</option>
             <option value="wantToRead">Want to Read</option>
             <option value="read">Read</option>
@@ -22,10 +22,13 @@ return (
         </div>
     </div>
     <div className="book-title">{props.book.title}</div>
-    <div className="book-authors">{props.book.authors[0]}</div>
+    <ul className="book-authors">{props.book.authors.map((author, index) => (
+      <li key={index}> {author}
+      </li>
+    ))}</ul>
     </div>
     )
-  };
+  }
 
 
 export default books

@@ -125,6 +125,11 @@ body, .app {
 .book-title,
 .book-authors {
   font-size: 0.8em;
+  list-style: none;
+  padding: 0;
+}
+.book-authors li{
+  padding: 0;
 }
 .book-title {
   margin-top: 10px;
