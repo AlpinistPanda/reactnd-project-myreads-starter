@@ -5,40 +5,65 @@ import * as BooksAPI from './BooksAPI'
 
 class SearchBook extends Component {
 
-  state = {
-    query: '',
-    resultBooks: []
-  }
+  constructor() {
+    super();
+    this.state = {
+      query: '',
+      resultBooks: []
+    };
+}
 
   /**
   * @description Sets the query and updates the state with results
   * @constructor
   * @param {string} query - Query keyword. Note these are restricted with a list
   */
-
-  setQuery(query){
-    this.setState({ query: query.trim() })
+ 
+  setQuery = (query) => {
+    let library = this.props.books;
+    // console.log(this);
+    this.setState({ query: query })
+    if(query ==='') {
+      this.setState({ resultBooks: [] })
+    }
       if (query.length > 0) {
-        BooksAPI.search(query).then((results) => {
-          let resultBooks = []
-          resultBooks = results
-          BooksAPI.getAll().then((books) => {
-            // nested loop to compare each book in our list with the
-            // results of our search
-            resultBooks.forEach(function(resultBook) {
-              books.forEach(function(book) {
-                if ( resultBook.id === book.id ) {
-                  resultBook.shelf = book.shelf;
-                }
-                else {
-                  resultBook.shelf = 'none'}
-              })
-            })
-          })
 
-          this.setState({ resultBooks: resultBooks })
-        })}
-  }
+        BooksAPI.search(query).then((results) => {
+          if(results.length > 0) {
+            const resultBooks = results.map((book) => {
+              // console.log(book);
+              library.forEach(function(el) {
+                if (el.id === book.id){
+                  book.shelf = el.shelf
+                  console.log(book.shelf)
+                }
+                else{
+                  book.shelf = 'none';
+                }
+              })
+              // const libBook = library.find((libBook) => libBook.id === book.id);
+              // const shelf = libBook ? libBook.shelf : 'none';
+
+            return{
+              id: book.id,
+              shelf: book.shelf,
+              authors: book.authors,
+              title: book.title,
+              imageLinks: {
+                  thumbnail: book.imageLinks.thumbnail
+              }
+            }
+            });
+            console.log(resultBooks)
+            this.setState({ resultBooks })
+        
+          };      
+        });
+  
+  };  
+};
+
+
 
   /**
   * @description Change shelf of a selected book
@@ -47,16 +72,23 @@ class SearchBook extends Component {
   * @param {string} shelf - shelf
   */
 
-  changeShelf(book, shelf){
-    BooksAPI.update(book, shelf).then(() => {
-      BooksAPI.getAll().then((books) => {
-        this.setState({ books })
-    })
-  })
-  }
+  
+  // changeShelf(book, shelf){
+  //   console.log(book);
+  //   console.log(shelf)
+  //   BooksAPI.update(book, shelf).then(() => {
+  //     BooksAPI.getAll().then((books) => {
+  //       this.setState({ books })
+  //   })
+  // })
+  // }
+
 
   render() {
-    return (
+
+    const { } = this.props;
+
+    return(
       <div className="search-books">
         <div className="search-books-bar">
           <Link className="close-search" to="/">
@@ -71,6 +103,7 @@ class SearchBook extends Component {
               However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
               you don't find a specific author or title. Every search is limited by search terms.
             */}
+
             <input
               type="text"
               placeholder="Search by title or author"
@@ -79,23 +112,25 @@ class SearchBook extends Component {
 
           </div>
         </div>
-        <div className="search-books-results">
-          <ol className="books-grid">
-            {this.state.resultBooks.map((book) => {
-              return (
-                <li key={ book.id } >
-                  <Books
-                    book={ book }
-                    onChangeShelf={this.changeShelf.bind(this)} />
-                </li>
-              )
-            })
-          }
-          </ol>
-        </div>
+        {this.state.resultBooks.length > 0 &&
+          <div className="search-books-results">
+            <ol className="books-grid">
+              {this.state.resultBooks.map((book) => {
+                  return (
+                    <li key={ book.id } >
+                      <Books
+                        book={ book }
+                        onChangeShelf={this.props.onChangeShelf} />
+                    </li>
+                  )
+                })
+              }
+            </ol>
+          </div>}
+
       </div>
-   )
+    )
   }
 }
 
-export default SearchBook
+export default SearchBook;

@@ -9,7 +9,8 @@ import './App.css'
 class App extends Component {
   state = {
     books: [],
-    showSearchPage: false
+    showSearchPage: false,
+    resultBooks: []
   }
     componentDidMount() {
     BooksAPI.getAll().then((books) => {
@@ -18,12 +19,47 @@ class App extends Component {
   }
 
   changeShelf(book, shelf){
+    // First update the server about the change
     BooksAPI.update(book, shelf).then(() => {
-      BooksAPI.getAll().then((books) => {
-        this.setState({ books })
-    })
-  })
+      // Then update the local version
+      book.shelf = shelf;
+
+
+      // Refresh the state
+      this.setState(state => ({
+          books: state.books
+      }));
+  });
+}; 
+
+setQuery = (query) => {
+  if(query){
+      BooksAPI.search(query).then((books) => {
+          // if the BookAPI.search worked properly, this would be unnecessary
+          if(books.length){
+              books.forEach((book, index) => {
+                  let myBook = this.state.books.find((b) => b.id === book.id);
+                  book.shelf = myBook ? myBook.shelf : 'none';
+                  books[index] = book;
+              });
+
+              this.setState({
+                  resultBooks: books
+              });
+          }
+
+      });
+      } else {
+      this.setState({
+          resultBooks: []
+      });
   }
+};
+
+getBookshelf(book){
+  this.props.books.filter((book) => book.shelf)
+};
+ 
 
   render() {
     return (
@@ -37,6 +73,8 @@ class App extends Component {
         )}/>
       <Route path="/search" render={() => (
         <SearchBook
+            onChangeShelf={this.changeShelf.bind(this)}
+            books={this.state.books}
           />
         )}/>
       </div>
@@ -44,4 +82,4 @@ class App extends Component {
   }
 }
 
-export default App
+export default App;

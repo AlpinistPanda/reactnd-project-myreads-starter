@@ -2,7 +2,7 @@ import React from 'react'
 import Bookshelf from './Bookshelf'
 import { Link } from 'react-router-dom'
 
-const listbooks = (props) => {
+const Listbooks = (props) => {
 
 return (
   <div className="list-books">
@@ -27,4 +27,4 @@ return (
   };
 
 
-export default listbooks
+export default Listbooks;
