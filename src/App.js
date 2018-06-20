@@ -19,17 +19,31 @@ class App extends Component {
   }
 
   changeShelf(book, shelf){
-    // First update the server about the change
-    BooksAPI.update(book, shelf).then(() => {
-      // Then update the local version
+
+    // See if the book is in the list
+
+    const index = this.state.books.findIndex((key) => {
+      return key.id === book.id;
+    });
+    let tempList = this.state.books;
+
+    if (index === -1) {
+      // the book is not in the list, copy it
       book.shelf = shelf;
+      tempList.push(book);
+
+    } else {
+
+      // it is already in the list just change the shelf
+      tempList[index].shelf = shelf;
+    }
+
+    BooksAPI.update(book, shelf).then(
+      this.setState({ books: tempList })
+    );
 
 
-      // Refresh the state
-      this.setState(state => ({
-          books: state.books
-      }));
-  });
+
 }; 
 
 setQuery = (query) => {

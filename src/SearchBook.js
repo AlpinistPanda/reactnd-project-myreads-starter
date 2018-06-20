@@ -21,7 +21,6 @@ class SearchBook extends Component {
  
   setQuery = (query) => {
     let library = this.props.books;
-    // console.log(this);
     this.setState({ query: query })
     if(query ==='') {
       this.setState({ resultBooks: [] })
@@ -31,18 +30,16 @@ class SearchBook extends Component {
         BooksAPI.search(query).then((results) => {
           if(results.length > 0) {
             const resultBooks = results.map((book) => {
-              // console.log(book);
               library.forEach(function(el) {
                 if (el.id === book.id){
                   book.shelf = el.shelf
-                  console.log(book.shelf)
+
                 }
                 else{
                   book.shelf = 'none';
                 }
               })
-              // const libBook = library.find((libBook) => libBook.id === book.id);
-              // const shelf = libBook ? libBook.shelf : 'none';
+
 
             return{
               id: book.id,
@@ -54,7 +51,6 @@ class SearchBook extends Component {
               }
             }
             });
-            console.log(resultBooks)
             this.setState({ resultBooks })
         
           };      
@@ -64,24 +60,12 @@ class SearchBook extends Component {
 };
 
 
-
   /**
   * @description Change shelf of a selected book
   * @constructor
   * @param {object} book - selected book object
   * @param {string} shelf - shelf
   */
-
-  
-  // changeShelf(book, shelf){
-  //   console.log(book);
-  //   console.log(shelf)
-  //   BooksAPI.update(book, shelf).then(() => {
-  //     BooksAPI.getAll().then((books) => {
-  //       this.setState({ books })
-  //   })
-  // })
-  // }
 
 
   render() {
